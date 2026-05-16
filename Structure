@@ -1,0 +1,11 @@
+https://github.com/Mike78-87/Synel/
+├── tests/
+│   ├── test_esign.py
+│   ├── requirements.txt
+│   └── test_files/
+│       ├── valid.pdf
+│       └── invalid.txt
+├── .github/
+│   └── workflows/
+│       └── run-tests.yml
+└── README.md
