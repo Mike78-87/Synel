@@ -1,0 +1,48 @@
+name: Run E-Sign Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install -r tests/requirements.txt
+
+    - name: Create test_files directory
+      run: mkdir -p tests/test_files
+
+    - name: Create minimal valid PDF
+      run: |
+        echo "%PDF-1.4" > tests/test_files/valid.pdf
+        echo "dummy content" >> tests/test_files/valid.pdf
+
+    - name: Create invalid text file
+      run: |
+        echo "This is not a PDF file." > tests/test_files/invalid.txt
+
+    - name: Run tests
+      run: pytest tests/test_esign.py -v
+
+    - name: Upload test logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-logs
+        path: |
+          *.log
+          tests/test_files/
